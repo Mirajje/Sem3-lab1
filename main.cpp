@@ -5,8 +5,9 @@
 
 int main (int argc, char* args[])
 {
-    runTimeTests<int>();
     SortsTests::allTestsTogether();
+    runTimeTests<int>();
+
 
     std::cout << "\nChoose array data type: 1 - int, 2 - float, 3 - string\n";
     long n = -1;

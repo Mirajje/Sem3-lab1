@@ -73,9 +73,9 @@ int menu()
 
                 try
                 {
+                    std::cout << "Sorted with quick sort, ";
                     Timer timer;
                     Sorts<T>::quickSort(arr, 0, arr->getLength(), [](const T& a, const T& b) { return (a < b); });
-                    std::cout << "Sorted with quick sort, ";
                 }
                 catch (const Errors& error)
                 {
@@ -89,9 +89,9 @@ int menu()
 
                 try
                 {
+                    std::cout << "Sorted with Shell sort, ";
                     Timer timer;
                     Sorts<T>::shellSort(arr, [](const T& a, const T& b) { return (a < b); });
-                    std::cout << "Sorted with Shell sort, ";
                 }
                 catch (const Errors& error)
                 {
@@ -105,9 +105,9 @@ int menu()
 
                 try
                 {
+                    std::cout << "Sorted with merge sort, ";
                     Timer timer;
                     Sorts<T>::mergeSort(arr, [](const T& a, const T& b) { return (a < b); });
-                    std::cout << "Sorted with merge sort, ";
                 }
                 catch (const Errors& error)
                 {
@@ -153,32 +153,30 @@ int menu()
 template <class T>
 void runTimeTests()
 {
-    Sequence<int>* arr = new ArraySequence<int>({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-                                                 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
-                                                 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55,
-                                                 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
-                                                 74, 75, 76, 77, 78, 79, 80, 82, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91,
-                                                 92, 93, 94, 95, 96, 97, 98, 99, });
+    std::unique_ptr<Sequence<int>> arr(new ArraySequence<int>(10000));
+
+    for (int i = 0; i < arr->getLength(); i++)
+        (*arr)[i] = i;
+    std::swap((*arr)[5267], (*arr)[9913]);
 
     std::cout << "Sorting an almost sorted array:\n";
-    runTime(arr);
+    runTime(arr.get());
+
     std::cout << "\nSorting reverse order array:\n";
-    (*arr) = {100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75,
-              74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49,
-              48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23,
-              22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    for (int i = 0; i < arr->getLength(); i++)
+        (*arr)[i] = arr->getLength() - 1 - i;
 
-    runTime(arr);
+    runTime(arr.get());
     std::cout << "\nSorting an array with a lot of repetitions:\n";
-    (*arr) = {10, 10, 10, 4, 10, 1, 2, 3, 10, 10, 10, 10, 10, 10, 10, 2, 10, 10, 10, 4, 10, 1, 2, 3, 10, 10, 10, 10,
-              10, 10, 10, 2, 10, 10, 10, 4, 10, 1, 2, 3, 10, 10, 10, 10, 10, 10, 10, 2, 10, 10, 10, 4, 10, 1, 2, 3, 10,
-              10, 10, 10, 10, 10, 10, 2, 10, 10, 10, 4, 10, 1, 2, 3, 10, 10, 10, 10,
-              10, 10, 10, 2, 10, 10, 10, 4, 10, 1, 2, 3, 10, 10, 10, 10, 10, 10, 10, 2};
 
-    runTime(arr);
+    for (int i = 0; i < arr->getLength(); i++)
+        (*arr)[i] = 10;
+    (*arr)[10] = 2; (*arr)[7777] = -14; (*arr)[9999] = 9999;
+
+    runTime(arr.get());
     std::cout << "\nSorting a small array:\n";
     (*arr) = {3, -1, 2};
-    runTime(arr);
+    runTime(arr.get());
 
     std::cout << "\nQuickSort has O(nlogn) complexity. In the worst case scenario complexity becomes O(n^2). Another "
                  "problem with it is that recursion depth will be n so stack overflow is possible.\n";
@@ -193,13 +191,14 @@ void runTimeTests()
 template <class T>
 void runTime(Sequence<T>* arr)
 {
-    Sequence<T>* origin = new ArraySequence<T>(*arr);
+    std::unique_ptr<Sequence<T>> origin(new ArraySequence<T>(*arr));
 
     //testing quickSort time
     {
-        Timer timer;
         try
         {
+            std::cout << "Sorted with quick sort, ";
+            Timer timer;
             Sorts<T>::quickSort(arr, 0, arr->getLength(), [](const T& a, const T& b) { return (a < b); });
         }
         catch (const Errors& error)
@@ -207,16 +206,16 @@ void runTime(Sequence<T>* arr)
             std::cout << "Process finished with error code = " << error << std::endl;
             exit(0);
         }
-        std::cout << "Sorted with quick sort, ";
     }
 
     (*arr) = (*origin);
 
     //testing shellSort time
     {
-        Timer timer;
         try
         {
+            std::cout << "Sorted with Shell sort, ";
+            Timer timer;
             Sorts<T>::shellSort(arr, [](const T& a, const T& b) { return (a < b); });
         }
         catch (const Errors& error)
@@ -224,16 +223,16 @@ void runTime(Sequence<T>* arr)
             std::cout << "Process finished with error code = " << error << std::endl;
             exit(0);
         }
-        std::cout << "Sorted with Shell sort, ";
     }
 
     (*arr) = (*origin);
 
     //testing mergeSort time
     {
-        Timer timer;
         try
         {
+            std::cout << "Sorted with merge sort, ";
+            Timer timer;
             Sorts<T>::mergeSort(arr, [](const T& a, const T& b) { return (a < b); });
         }
         catch (const Errors& error)
@@ -241,7 +240,23 @@ void runTime(Sequence<T>* arr)
             std::cout << "Process finished with error code = " << error << std::endl;
             exit(0);
         }
-        std::cout << "Sorted with merge sort, ";
+    }
+
+    (*arr) = (*origin);
+
+    //testing radixSort time
+    {
+        try
+        {
+            std::cout << "Sorted with radix sort, ";
+            Timer timer;
+            Sorts<T>::radixSort(arr, 3, 300);
+        }
+        catch (const Errors& error)
+        {
+            std::cout << "Process finished with error code = " << error << std::endl;
+            exit(0);
+        }
     }
 }
 

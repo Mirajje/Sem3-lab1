@@ -13,7 +13,6 @@ public:
     static void shellSort(Sequence<T>* arr, bool (*comp) (const T&, const T&));
     static void radixSort(Sequence<T>* arr, int m, int k);
 
-
 private:
     static int symb(const int& a, int digit);
     static int symb(const std::string& a, int digit);
@@ -95,7 +94,9 @@ void Sorts<T>::quickSort(Sequence<T>* arr,  int low, int high, bool (*comp) (con
 template <class T>
 int Sorts<T>::partition(Sequence<T>* arr, int low, int high, bool (*comp) (const T&, const T&))
 {
-    T pivot = (*arr)[high - 1];
+    int index = rand() % (high - low) + low;
+    T pivot = (*arr)[index];
+    std::swap((*arr)[index], (*arr)[high - 1]);
 
     int spot = low;
     for (int i = low; i < high - 1; i++)
@@ -139,6 +140,15 @@ int Sorts<T>::symb(const int& a, int digit)
 template <class T>
 void Sorts<T>::radixSort(Sequence<T>* arr, int m, int k)
 {
+    if (arr == nullptr)
+        throw Errors(Errors::NULL_POINTER_ERROR);
+
+    if (arr->getLength() == 0)
+        throw Errors(Errors::ZERO_SIZE_ERROR);
+
+    if (arr->getLength() < 0)
+        throw Errors(Errors::NEGATIVE_SIZE_ERROR);
+
     Sequence<T>* new_array;
     std::vector<int> c(k);
     int count, tmp, d;
